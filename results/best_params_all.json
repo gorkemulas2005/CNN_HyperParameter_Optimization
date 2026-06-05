@@ -1,0 +1,80 @@
+{
+  "vgg16": {
+    "ga": {
+      "params": {
+        "learning_rate": 0.0005,
+        "dropout_rate": 0.6,
+        "dense_units": 512,
+        "optimizer": "sgd",
+        "batch_size": 32
+      },
+      "val_acc": 1.0,
+      "time_sec": 22789.646765947342
+    },
+    "bayesian": {
+      "params": {
+        "learning_rate": 0.00314288089084011,
+        "dropout_rate": 0.28493564427131046,
+        "dense_units": 512,
+        "optimizer": "rmsprop",
+        "batch_size": 64
+      },
+      "val_acc": 1.0,
+      "time_sec": 7909.084122180939
+    }
+  },
+  "resnet50": {
+    "ga": {
+      "params": {
+        "learning_rate": 1e-05,
+        "dropout_rate": 0.5,
+        "dense_units": 128,
+        "optimizer": "adam",
+        "batch_size": 64
+      },
+      "val_acc": 1.0,
+      "time_sec": 25892.061282873154
+    },
+    "bayesian": {
+      "params": {
+        "learning_rate": 0.00023345864076016249,
+        "dropout_rate": 0.5140703845572054,
+        "dense_units": 384,
+        "optimizer": "adam",
+        "batch_size": 32
+      },
+      "val_acc": 1.0,
+      "time_sec": 6880.06552362442
+    }
+  },
+  "custom": {
+    "ga": {
+      "params": {
+        "learning_rate": 0.001,
+        "dropout_rate": 0.5,
+        "dense_units": 128,
+        "optimizer": "adam",
+        "batch_size": 32,
+        "base_filters": 64,
+        "num_blocks": 2,
+        "kernel_size": 5
+      },
+      "val_acc": 1.0,
+      "time_sec": 22906.372846841812
+    },
+    "bayesian": {
+      "params": {
+        "learning_rate": 8.200518402245828e-05,
+        "dropout_rate": 0.23906884560255356,
+        "dense_units": 128,
+        "optimizer": "sgd",
+        "batch_size": 16,
+        "base_filters": 64,
+        "num_blocks": 5,
+        "kernel_size": 3
+      },
+      "val_acc": 1.0,
+      "time_sec": 8557.588170289993
+    }
+  }
+}

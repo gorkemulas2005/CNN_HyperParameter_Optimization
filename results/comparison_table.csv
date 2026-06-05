@@ -1,0 +1,7 @@
+Model,Accuracy,Precision,Recall,F1_Score,Time_min,Best_Params
+CUSTOM_BAYESIAN,1.0,1.0,1.0,1.0,163.1,"{""learning_rate"": 8.200518402245828e-05, ""dropout_rate"": 0.23906884560255356, ""dense_units"": 128, ""optimizer"": ""sgd"", ""batch_size"": 16, ""base_filters"": 64, ""num_blocks"": 5, ""kernel_size"": 3}"
+CUSTOM_GA,1.0,1.0,1.0,1.0,403.7,"{""learning_rate"": 0.001, ""dropout_rate"": 0.5, ""dense_units"": 128, ""optimizer"": ""adam"", ""batch_size"": 32, ""base_filters"": 64, ""num_blocks"": 2, ""kernel_size"": 5}"
+RESNET50_BAYESIAN,1.0,1.0,1.0,1.0,128.3,"{""learning_rate"": 0.00023345864076016249, ""dropout_rate"": 0.5140703845572054, ""dense_units"": 384, ""optimizer"": ""adam"", ""batch_size"": 32}"
+RESNET50_GA,0.9996,0.9994,0.9994,0.9994,446.4,"{""learning_rate"": 1e-05, ""dropout_rate"": 0.5, ""dense_units"": 128, ""optimizer"": ""adam"", ""batch_size"": 64}"
+VGG16_BAYESIAN,1.0,1.0,1.0,1.0,153.5,"{""learning_rate"": 0.00314288089084011, ""dropout_rate"": 0.28493564427131046, ""dense_units"": 512, ""optimizer"": ""rmsprop"", ""batch_size"": 64}"
+VGG16_GA,1.0,1.0,1.0,1.0,396.2,"{""learning_rate"": 0.0005, ""dropout_rate"": 0.6, ""dense_units"": 512, ""optimizer"": ""sgd"", ""batch_size"": 32}"
