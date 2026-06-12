@@ -122,9 +122,6 @@ Aşağıda 4 farklı model mimarisi için (Bayesyen TPE ve Genetik Algoritma baz
 > **Genetik Algoritma (GA) Sonuçları (Proposed CNN)**  
 > ![Custom_V2_GA_CM](results/plots/CUSTOM_V2_GA_cm.png) ![Custom_V2_GA_Hist](results/plots/CUSTOM_V2_GA_history.png)
 
-#### Modellerin Toplu Performans Bar Grafiği
-> ![Final Comparison](results/plots/final_comparison.png)
-
 ---
 
 ## 4. TARTIŞMA VE MİMARİ ANALİZ (Discussion)
