@@ -5,10 +5,15 @@ Model 3: Custom CNN built from scratch (PyTorch).
 
 Architecture:
     - Depthwise Separable Convolution blocks
-    - Squeeze-and-Excitation (SE) attention mechanism
-    - Residual connections
-    - GELU activation with Batch Normalization
+    - Residual shortcuts around separable convolution blocks
+    - LeakyReLU activation with Batch Normalization
     - Global Average Pooling with Dropout
+
+Note:
+    SEBlock is defined in this module, but the current SepConvBlock forward
+    path does not apply it. Existing experiment outputs therefore correspond
+    to the residual depthwise-separable CNN path, not an active SE-attention
+    variant.
 """
 
 import torch
@@ -61,7 +66,7 @@ class SepConvBlock(nn.Module):
         )
 
     def forward(self, x):
-        return self.conv(x) * 1.0 + self.shortcut(x)  # Residual after SE
+        return self.conv(x) + self.shortcut(x)
 
 
 # -- Custom CNN ----------------------------------------------------------------

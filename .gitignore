@@ -2,15 +2,22 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
 # Distribution / packaging
 *.egg-info/
 dist/
 build/
+*.whl
 
 # Virtual environments
 venv/
+.venv/
+env/
 .env/
+.env.*
 
 # IDE
 .vscode/
@@ -26,12 +33,25 @@ data/
 # Model weights (large files)
 results/models/*.pt
 results/models/*.pth
+*.ckpt
+*.safetensors
+*.onnx
 
 # Logs
 logs/
+*.log
 
 # Jupyter
 .ipynb_checkpoints/
 
 # PDF files
 *.pdf
+
+# Local experiment scratch files
+tmp/
+temp/
+wandb/
+runs/
+mlruns/
+*.sqlite
+*.db

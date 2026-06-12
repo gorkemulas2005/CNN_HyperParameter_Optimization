@@ -114,7 +114,7 @@ def build_proposed_cnn(
 
 def get_optimizer(model, optimizer_name: str, learning_rate: float):
     """
-    Returns the AdamW optimizer with weight_decay=1e-3 to maintain
-    consistency across all experiments.
+    Returns AdamW with weight_decay=1e-3. The optimizer_name argument is
+    accepted for interface compatibility but is not used by this model.
     """
     return torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=1e-3)
