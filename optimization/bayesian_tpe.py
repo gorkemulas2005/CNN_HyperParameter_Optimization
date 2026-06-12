@@ -1,7 +1,13 @@
 """
-optimization/bayesian_tpe.py  —  DAGM 2007
---------------------------------------------
-Optuna TPE — num_classes parametresi dışarıdan alınır.
+Bayesian Hyperparameter Optimization using Tree-structured Parzen Estimator (TPE).
+
+This module implements Optuna-based TPE optimization for CNN hyperparameters
+on the DAGM 2007 dataset. It supports optional grid-based pruning thresholds
+derived from a prior genetic algorithm search, enabling knowledge-guided
+early stopping of unpromising trials.
+
+Reference:
+    Acici et al. (2020) - Bone fracture detection using GA+CNN optimization.
 """
 
 import time, json, os
@@ -16,10 +22,26 @@ os.makedirs(RESULT_DIR, exist_ok=True)
 optuna.logging.set_verbosity(optuna.logging.WARNING)
 
 
-def make_objective(model_name: str, epochs: int = 5, num_classes: int = 10):
+def make_objective(model_name: str, epochs: int = 5, num_classes: int = 10, grid_thresholds: dict = None):
+    """Create an Optuna objective function for Bayesian TPE optimization.
+
+    The returned callable builds and trains a CNN model with trial-suggested
+    hyperparameters, returning the best validation accuracy as the objective
+    value to maximize.
+
+    Args:
+        model_name: Target model architecture name.
+        epochs: Number of training epochs per trial.
+        num_classes: Number of output classes for the classification task.
+        grid_thresholds: Optional per-optimizer pruning thresholds from GA.
+
+    Returns:
+        An objective function compatible with Optuna's optimization interface.
+    """
     from models.vgg16_model      import build_vgg16,      get_optimizer as opt_vgg
     from models.resnet50_model   import build_resnet50,   get_optimizer as opt_res
     from models.custom_cnn_model import build_custom_cnn, get_optimizer as opt_cus
+    from models.custom_cnn_v2_model import build_custom_cnn_v2, get_optimizer as opt_cus_v2
 
     device = get_device()
 
@@ -41,7 +63,7 @@ def make_objective(model_name: str, epochs: int = 5, num_classes: int = 10):
                 model = build_resnet50(num_classes=num_classes,
                                        dropout_rate=dropout, dense_units=dense)
                 optim = opt_res(model, opt_n, lr)
-            else:
+            elif model_name == "custom":
                 base_f = trial.suggest_categorical("base_filters", [16, 32, 64])
                 n_blk  = trial.suggest_int("num_blocks", 2, 5)
                 kern   = trial.suggest_categorical("kernel_size", [3, 5])
@@ -51,13 +73,26 @@ def make_objective(model_name: str, epochs: int = 5, num_classes: int = 10):
                     kernel_size=kern, dropout_rate=dropout,
                 )
                 optim = opt_cus(model, opt_n, lr)
+            else:
+                base_f = trial.suggest_categorical("base_filters", [8, 16, 32])
+                kern   = trial.suggest_categorical("kernel_size", [3, 5])
+                model  = build_custom_cnn_v2(
+                    num_classes=num_classes,
+                    base_filters=base_f,
+                    kernel_size=kern, dropout_rate=dropout,
+                )
+                optim = opt_cus_v2(model, opt_n, lr)
+
+            current_threshold = None
+            if grid_thresholds is not None:
+                current_threshold = grid_thresholds.get(opt_n, 0.0)
 
             _, _, best_val_acc = train_model(
                 model, train_loader, val_loader, optim,
-                epochs=epochs, patience=3, device=device
+                epochs=epochs, patience=3, device=device, prune_threshold=current_threshold
             )
         except Exception as e:
-            print(f"  [Bayesian Hata] {e}")
+            print(f"  [Bayesian Error] {e}")
             best_val_acc = 0.0
 
         return best_val_acc
@@ -71,9 +106,23 @@ def run_bayesian(
     epochs_per_trial: int = 5,
     num_classes:      int = 10,
 ):
+    """Execute Bayesian TPE hyperparameter optimization.
+
+    Creates an Optuna study with TPE sampling and optimizes CNN
+    hyperparameters over the specified number of trials.
+
+    Args:
+        model_name: Target model architecture name.
+        n_trials: Number of optimization trials.
+        epochs_per_trial: Training epochs per trial evaluation.
+        num_classes: Number of output classes.
+
+    Returns:
+        Tuple of (best_params, best_val_acc, elapsed, study).
+    """
     print(f"\n{'='*55}")
-    print(f" Bayesian TPE — Model: {model_name.upper()}")
-    print(f" Deneme: {n_trials} | Epoch/Deneme: {epochs_per_trial}")
+    print(f" Bayesian TPE Optimization - Model: {model_name.upper()}")
+    print(f" Trials: {n_trials} | Epochs/Trial: {epochs_per_trial}")
     print(f"{'='*55}")
 
     study = optuna.create_study(
@@ -109,5 +158,5 @@ def run_bayesian(
     with open(path, "w") as f:
         json.dump(result, f, indent=2)
 
-    print(f"\n  [Bayesian] En iyi val_acc={best_val_acc:.4f} | Süre={elapsed/60:.1f} dk")
+    print(f"\n  [Bayesian] Best val_acc={best_val_acc:.4f} | Time={elapsed/60:.1f} min")
     return best_params, best_val_acc, elapsed, study

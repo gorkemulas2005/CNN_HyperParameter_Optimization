@@ -1,0 +1,32 @@
+{
+  "model": "custom_v2",
+  "best_params": {
+    "learning_rate": 0.01,
+    "dropout_rate": 0.3,
+    "dense_units": 512,
+    "optimizer": "adam",
+    "batch_size": 64,
+    "base_filters": 32,
+    "num_blocks": 5,
+    "kernel_size": 5
+  },
+  "best_val_accuracy": 0.4706,
+  "elapsed_sec": 410.5,
+  "logbook": [
+    {
+      "gen": 0,
+      "max": 0.4706,
+      "avg": 0.3599
+    },
+    {
+      "gen": 1,
+      "max": 0.4706,
+      "avg": 0.4353
+    },
+    {
+      "gen": 2,
+      "max": 0.4706,
+      "avg": 0.3687
+    }
+  ]
+}

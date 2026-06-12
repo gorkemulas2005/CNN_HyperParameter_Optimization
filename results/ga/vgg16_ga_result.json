@@ -2,43 +2,33 @@
   "model": "vgg16",
   "best_params": {
     "learning_rate": 0.0005,
-    "dropout_rate": 0.6,
-    "dense_units": 512,
-    "optimizer": "sgd",
-    "batch_size": 32
+    "dropout_rate": 0.5,
+    "dense_units": 256,
+    "optimizer": "adam",
+    "batch_size": 16
   },
-  "best_val_accuracy": 1.0,
-  "elapsed_sec": 22789.6,
+  "grid_thresholds": {
+    "adam": 0.8346,
+    "sgd": 0.8346,
+    "rmsprop": 0.8346
+  },
+  "best_val_accuracy": 0.9146,
+  "elapsed_sec": 2747.8,
   "logbook": [
     {
       "gen": 0,
-      "max": 1.0,
-      "avg": 1.0
+      "max": 0.9146,
+      "avg": 0.8044
     },
     {
       "gen": 1,
-      "max": 1.0,
-      "avg": 0.9998
+      "max": 0.8308,
+      "avg": 0.8056
     },
     {
       "gen": 2,
-      "max": 1.0,
-      "avg": 1.0
-    },
-    {
-      "gen": 3,
-      "max": 1.0,
-      "avg": 1.0
-    },
-    {
-      "gen": 4,
-      "max": 1.0,
-      "avg": 1.0
-    },
-    {
-      "gen": 5,
-      "max": 1.0,
-      "avg": 0.9999
+      "max": 0.9138,
+      "avg": 0.8421
     }
   ]
 }

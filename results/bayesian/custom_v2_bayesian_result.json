@@ -1,0 +1,81 @@
+{
+  "model": "custom_v2",
+  "best_params": {
+    "learning_rate": 0.00788671412999049,
+    "dropout_rate": 0.5233589392465845,
+    "dense_units": 384,
+    "optimizer": "sgd",
+    "batch_size": 16,
+    "base_filters": 32,
+    "kernel_size": 5
+  },
+  "best_val_accuracy": 0.7143,
+  "elapsed_sec": 310.9,
+  "trials": [
+    {
+      "number": 0,
+      "val_accuracy": 0.2185,
+      "params": {
+        "learning_rate": 0.0001329291894316216,
+        "dropout_rate": 0.5802857225639664,
+        "dense_units": 128,
+        "optimizer": "sgd",
+        "batch_size": 64,
+        "base_filters": 8,
+        "kernel_size": 5
+      }
+    },
+    {
+      "number": 1,
+      "val_accuracy": 0.177,
+      "params": {
+        "learning_rate": 0.00037520558551242813,
+        "dropout_rate": 0.3727780074568463,
+        "dense_units": 256,
+        "optimizer": "rmsprop",
+        "batch_size": 64,
+        "base_filters": 16,
+        "kernel_size": 5
+      }
+    },
+    {
+      "number": 2,
+      "val_accuracy": 0.7143,
+      "params": {
+        "learning_rate": 0.00788671412999049,
+        "dropout_rate": 0.5233589392465845,
+        "dense_units": 384,
+        "optimizer": "sgd",
+        "batch_size": 16,
+        "base_filters": 32,
+        "kernel_size": 5
+      }
+    },
+    {
+      "number": 3,
+      "val_accuracy": 0.3093,
+      "params": {
+        "learning_rate": 0.002115429079726122,
+        "dropout_rate": 0.5757995766256756,
+        "dense_units": 384,
+        "optimizer": "rmsprop",
+        "batch_size": 64,
+        "base_filters": 32,
+        "kernel_size": 5
+      }
+    },
+    {
+      "number": 4,
+      "val_accuracy": 0.143,
+      "params": {
+        "learning_rate": 1.6736010167825783e-05,
+        "dropout_rate": 0.5947547746402069,
+        "dense_units": 512,
+        "optimizer": "rmsprop",
+        "batch_size": 32,
+        "base_filters": 8,
+        "kernel_size": 5
+      }
+    }
+  ]
+}

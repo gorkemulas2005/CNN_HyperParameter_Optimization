@@ -1,7 +1,8 @@
 """
 utils/plotter.py
 ----------------
-Eğitim eğrileri, confusion matrix, karşılaştırma grafikleri.
+Visualization utilities for training curves, confusion matrices,
+and final comparison bar charts (GA vs. Bayesian TPE).
 """
 
 import matplotlib.pyplot as plt
@@ -27,7 +28,7 @@ def plot_history(history: dict, model_name: str, optimizer_name: str):
 
     fname = f"{PLOT_DIR}/{model_name}_{optimizer_name}_history.png"
     plt.tight_layout(); plt.savefig(fname, dpi=150); plt.close()
-    print(f"  [Grafik] {fname}")
+    print(f"  [Plot saved] {fname}")
 
 
 def plot_confusion_matrix(cm, class_names, model_name: str, optimizer_name: str):
@@ -38,7 +39,7 @@ def plot_confusion_matrix(cm, class_names, model_name: str, optimizer_name: str)
     plt.xlabel("Predicted"); plt.ylabel("True")
     fname = f"{PLOT_DIR}/{model_name}_{optimizer_name}_cm.png"
     plt.tight_layout(); plt.savefig(fname, dpi=150); plt.close()
-    print(f"  [Grafik] {fname}")
+    print(f"  [Plot saved] {fname}")
 
 
 def plot_final_comparison(results: dict):
@@ -49,12 +50,12 @@ def plot_final_comparison(results: dict):
 
     x = np.arange(len(labels))
     fig, axes = plt.subplots(1, 3, figsize=(18, 6))
-    fig.suptitle("GA vs Bayesian TPE — Karşılaştırma", fontsize=15)
+    fig.suptitle("GA vs Bayesian TPE — Performance Comparison", fontsize=15)
 
     for ax, vals, title, color in zip(
         axes,
         [accs, f1s, times],
-        ["Accuracy", "F1-Score (Macro)", "Süre (dakika)"],
+        ["Accuracy", "F1-Score (Macro)", "Duration (minutes)"],
         ["#4C72B0", "#DD8452", "#55A868"]
     ):
         bars = ax.bar(x, vals, color=color, alpha=0.85)
@@ -69,4 +70,4 @@ def plot_final_comparison(results: dict):
 
     fname = f"{PLOT_DIR}/final_comparison.png"
     plt.tight_layout(); plt.savefig(fname, dpi=150); plt.close()
-    print(f"  [Grafik] {fname}")
+    print(f"  [Plot saved] {fname}")

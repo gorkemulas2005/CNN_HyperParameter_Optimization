@@ -1,47 +1,37 @@
 {
   "model": "custom",
   "best_params": {
-    "learning_rate": 0.001,
-    "dropout_rate": 0.5,
+    "learning_rate": 0.0001,
+    "dropout_rate": 0.4,
     "dense_units": 128,
-    "optimizer": "adam",
-    "batch_size": 32,
-    "base_filters": 64,
-    "num_blocks": 2,
+    "optimizer": "rmsprop",
+    "batch_size": 16,
+    "base_filters": 32,
+    "num_blocks": 5,
     "kernel_size": 5
   },
-  "best_val_accuracy": 1.0,
-  "elapsed_sec": 22906.4,
+  "grid_thresholds": {
+    "adam": 0.7127,
+    "sgd": 0.7127,
+    "rmsprop": 0.7127
+  },
+  "best_val_accuracy": 0.8541,
+  "elapsed_sec": 1491.4,
   "logbook": [
     {
       "gen": 0,
-      "max": 1.0,
-      "avg": 0.9665
+      "max": 0.8541,
+      "avg": 0.3841
     },
     {
       "gen": 1,
-      "max": 1.0,
-      "avg": 0.9983
+      "max": 0.8541,
+      "avg": 0.6229
     },
     {
       "gen": 2,
-      "max": 1.0,
-      "avg": 0.9969
-    },
-    {
-      "gen": 3,
-      "max": 1.0,
-      "avg": 1.0
-    },
-    {
-      "gen": 4,
-      "max": 1.0,
-      "avg": 0.9996
-    },
-    {
-      "gen": 5,
-      "max": 1.0,
-      "avg": 0.9997
+      "max": 0.8541,
+      "avg": 0.7142
     }
   ]
 }

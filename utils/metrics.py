@@ -1,7 +1,11 @@
 """
 utils/metrics.py
 ----------------
-IMRAD standartları: Accuracy, Precision, Recall, F1-Score.
+Evaluation metrics for multi-class classification performance.
+
+Computes standard metrics following IMRAD reporting conventions:
+Accuracy, Precision (macro), Recall (macro), and F1-Score (macro),
+along with a per-class classification report and confusion matrix.
 """
 
 import torch
@@ -14,13 +18,27 @@ from sklearn.metrics import (
 
 def evaluate_model(model, test_loader, class_names, device=None):
     """
-    Test seti üzerinde tüm metrikleri hesaplar.
+    Evaluate the trained model on the test set and compute all metrics.
+
+    Parameters
+    ----------
+    model : nn.Module
+        Trained model to evaluate.
+    test_loader : DataLoader
+        Test data loader.
+    class_names : list of str
+        Human-readable class names for the classification report.
+    device : torch.device, optional
+        Computation device; auto-detected if None.
 
     Returns
     -------
-    metrics : dict  {accuracy, precision, recall, f1_score}
-    report  : str   (per-class classification report)
-    cm      : ndarray (confusion matrix)
+    metrics : dict
+        Dictionary with keys: accuracy, precision, recall, f1_score.
+    report : str
+        Per-class classification report (sklearn format).
+    cm : ndarray
+        Confusion matrix of shape (num_classes, num_classes).
     """
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

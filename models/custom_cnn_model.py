@@ -1,14 +1,14 @@
 """
 models/custom_cnn_model.py
 --------------------------
-Model 3: Custom CNN — Sıfırdan (PyTorch)
+Model 3: Custom CNN built from scratch (PyTorch).
 
-Mimari:
-  • Depthwise Separable Conv blokları
-  • Squeeze-Excitation (SE) dikkat mekanizması
-  • Residual bağlantı
-  • GELU aktivasyon + BatchNorm
-  • Global Average Pooling + Dropout
+Architecture:
+    - Depthwise Separable Convolution blocks
+    - Squeeze-and-Excitation (SE) attention mechanism
+    - Residual connections
+    - GELU activation with Batch Normalization
+    - Global Average Pooling with Dropout
 """
 
 import torch
@@ -16,7 +16,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-# ── Squeeze-Excitation Bloğu ──────────────────────────────────────────────────
+# -- Squeeze-and-Excitation Block ---------------------------------------------
 class SEBlock(nn.Module):
     def __init__(self, channels: int, ratio: int = 16):
         super().__init__()
@@ -36,7 +36,7 @@ class SEBlock(nn.Module):
         return x * w
 
 
-# ── Depthwise Separable Conv Bloğu ───────────────────────────────────────────
+# -- Depthwise Separable Convolution Block ------------------------------------
 class SepConvBlock(nn.Module):
     def __init__(self, in_ch: int, out_ch: int,
                  kernel_size: int = 3, use_se: bool = True):
@@ -50,21 +50,21 @@ class SepConvBlock(nn.Module):
             # Pointwise
             nn.Conv2d(in_ch, out_ch, 1, bias=False),
             nn.BatchNorm2d(out_ch),
-            nn.GELU(),
+            nn.LeakyReLU(0.3),
         )
         self.se = SEBlock(out_ch) if use_se else nn.Identity()
 
-        # Residual: channel uyuşmuyorsa 1×1 conv
+        # Residual: use 1x1 convolution when channel dimensions do not match
         self.shortcut = (
             nn.Conv2d(in_ch, out_ch, 1, bias=False)
             if in_ch != out_ch else nn.Identity()
         )
 
     def forward(self, x):
-        return self.conv(x) * 1.0 + self.shortcut(x)  # SE sonrası residual
+        return self.conv(x) * 1.0 + self.shortcut(x)  # Residual after SE
 
 
-# ── Custom CNN ────────────────────────────────────────────────────────────────
+# -- Custom CNN ----------------------------------------------------------------
 class CustomCNN(nn.Module):
     def __init__(
         self,
@@ -72,7 +72,7 @@ class CustomCNN(nn.Module):
         base_filters: int   = 32,
         num_blocks:   int   = 3,
         kernel_size:  int   = 3,
-        dropout_rate: float = 0.4,
+        dropout_rate: float = 0.5,
         use_se:       bool  = True,
     ):
         super().__init__()
@@ -81,11 +81,11 @@ class CustomCNN(nn.Module):
         self.stem = nn.Sequential(
             nn.Conv2d(3, base_filters, 3, stride=2, padding=1, bias=False),
             nn.BatchNorm2d(base_filters),
-            nn.GELU(),
+            nn.LeakyReLU(0.3),
             nn.MaxPool2d(2),
         )
 
-        # SepConv blokları
+        # Separable convolution blocks
         blocks = []
         in_ch  = base_filters
         for i in range(num_blocks):
@@ -102,7 +102,7 @@ class CustomCNN(nn.Module):
             nn.Flatten(),
             nn.Linear(in_ch, in_ch),
             nn.BatchNorm1d(in_ch),
-            nn.GELU(),
+            nn.LeakyReLU(0.3),
             nn.Dropout(dropout_rate),
             nn.Linear(in_ch, num_classes),
         )
@@ -118,7 +118,7 @@ def build_custom_cnn(
     base_filters: int   = 32,
     num_blocks:   int   = 3,
     kernel_size:  int   = 3,
-    dropout_rate: float = 0.4,
+    dropout_rate: float = 0.5,
     use_se:       bool  = True,
 ):
     return CustomCNN(
@@ -134,10 +134,10 @@ def build_custom_cnn(
 def get_optimizer(model, optimizer_name: str, learning_rate: float):
     name = optimizer_name.lower()
     if name == "adam":
-        return torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-4)
+        return torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=1e-3)
     elif name == "sgd":
         return torch.optim.SGD(model.parameters(), lr=learning_rate,
-                               momentum=0.9, nesterov=True, weight_decay=1e-4)
+                               momentum=0.9, nesterov=True, weight_decay=1e-3)
     elif name == "rmsprop":
-        return torch.optim.RMSprop(model.parameters(), lr=learning_rate, weight_decay=1e-4)
-    return torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-4)
+        return torch.optim.RMSprop(model.parameters(), lr=learning_rate, weight_decay=1e-3)
+    return torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=1e-3)

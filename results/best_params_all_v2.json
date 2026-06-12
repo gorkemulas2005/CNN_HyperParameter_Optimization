@@ -1,0 +1,31 @@
+{
+  "custom_v2": {
+    "ga": {
+      "params": {
+        "learning_rate": 0.01,
+        "dropout_rate": 0.3,
+        "dense_units": 512,
+        "optimizer": "adam",
+        "batch_size": 64,
+        "base_filters": 32,
+        "num_blocks": 5,
+        "kernel_size": 5
+      },
+      "val_acc": 0.47056384742951907,
+      "time_sec": 410.53029441833496
+    },
+    "bayesian": {
+      "params": {
+        "learning_rate": 0.00788671412999049,
+        "dropout_rate": 0.5233589392465845,
+        "dense_units": 384,
+        "optimizer": "sgd",
+        "batch_size": 16,
+        "base_filters": 32,
+        "kernel_size": 5
+      },
+      "val_acc": 0.7143449419568823,
+      "time_sec": 310.90681982040405
+    }
+  }
+}

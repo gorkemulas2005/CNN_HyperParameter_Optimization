@@ -1,0 +1,38 @@
+Model    : CUSTOM_V2_BAYESIAN
+Dataset  : DAGM 2007 (10 sınıf)
+Params   : {
+  "learning_rate": 0.00788671412999049,
+  "dropout_rate": 0.5233589392465845,
+  "dense_units": 384,
+  "optimizer": "sgd",
+  "batch_size": 16,
+  "base_filters": 32,
+  "kernel_size": 5
+}
+
+Opt Süresi   : 5.2 dk
+Train Süresi : 4.1 dk
+
+Test Metrikleri:
+  accuracy: 0.9189
+  precision: 0.9213
+  recall: 0.8922
+  f1_score: 0.8842
+
+Classification Report:
+              precision    recall  f1-score   support
+
+      Class1       1.00      1.00      1.00       173
+     Class10       1.00      0.96      0.98       345
+      Class2       1.00      1.00      1.00       173
+      Class3       0.95      0.93      0.94       173
+      Class4       0.63      0.10      0.17       173
+      Class5       1.00      0.95      0.97       173
+      Class6       1.00      1.00      1.00       173
+      Class7       0.68      1.00      0.81       345
+      Class8       0.99      0.99      0.99       345
+      Class9       0.96      1.00      0.98       345
+
+    accuracy                           0.92      2418
+   macro avg       0.92      0.89      0.88      2418
+weighted avg       0.92      0.92      0.90      2418

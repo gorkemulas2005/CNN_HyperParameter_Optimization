@@ -1,0 +1,35 @@
+{
+  "CUSTOM_REPULSIVE_HYBRID": {
+    "learning_rate": 8.200518402245828e-05,
+    "dropout_rate": 0.23906884560255356,
+    "dense_units": 128,
+    "optimizer": "sgd",
+    "batch_size": 16,
+    "base_filters": 64,
+    "num_blocks": 5,
+    "kernel_size": 3
+  },
+  "PROPOSED_REPULSIVE_HYBRID": {
+    "learning_rate": 0.00788671412999049,
+    "dropout_rate": 0.5233589392465845,
+    "dense_units": 384,
+    "optimizer": "sgd",
+    "batch_size": 16,
+    "base_filters": 32,
+    "kernel_size": 5
+  },
+  "RESNET50_REPULSIVE_HYBRID": {
+    "learning_rate": 8.569331925053983e-05,
+    "dropout_rate": 0.33007332881069884,
+    "dense_units": 384,
+    "optimizer": "rmsprop",
+    "batch_size": 32
+  },
+  "VGG16_REPULSIVE_HYBRID": {
+    "learning_rate": 8.569331925053983e-05,
+    "dropout_rate": 0.33007332881069884,
+    "dense_units": 384,
+    "optimizer": "rmsprop",
+    "batch_size": 32
+  }
+}

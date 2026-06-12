@@ -1,18 +1,37 @@
-# Sanal Ortam (Çok yer kaplar, yüklenmez)
-.venv/
+# Byte-compiled / optimized
+__pycache__/
+*.py[cod]
+*$py.class
 
-# Veri Setleri
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+.env/
+
+# IDE
+.vscode/
+.idea/
+
+# OS generated
+Thumbs.db
+.DS_Store
+
+# Data (large files -- download separately)
 data/
 
-# Model Ağırlıkları, Loglar ve Çıktılar
+# Model weights (large files)
+results/models/*.pt
+results/models/*.pth
+
+# Logs
 logs/
 
-# Sadece model ağırlıklarını ve klasörünü engelle
-*.pt
-*.pth
-results/models/
+# Jupyter
+.ipynb_checkpoints/
 
-# PyCharm ve Python Geçici Dosyaları
-.idea/
-__pycache__/
-*.pyc
+# PDF files
+*.pdf
