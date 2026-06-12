@@ -244,14 +244,33 @@ Bu çalışmada hiperparametre optimizasyonu tüm katman tiplerini serbestçe ta
 | Custom CNN | Evet | Evet | Evet | Hayır | `num_blocks`, `base_filters` ve `kernel_size` aranır; pooling yapısı sabittir. |
 | Proposed CNN / Custom V2 | Hayır | Evet | Evet | Hayır | Blok sayısı sabit 5'tir; `base_filters` ve `kernel_size` aranır. GA çıktısındaki `num_blocks` bu modelde kullanılmaz. |
 
+CNN bileşeni düzeyinde arama kapsamı:
+
+| Bileşen | Arandı mı? | Kodda karşılığı | Açıklama |
+| --- | --- | --- | --- |
+| Öğrenme oranı | Evet | `learning_rate` | Tüm modellerde eğitim hiperparametresi olarak aranır. |
+| Dropout oranı | Evet | `dropout_rate` | Tüm modellerde ilgili classifier/head dropout katmanlarına uygulanır. |
+| Batch size | Evet | `batch_size` | Tüm modellerde veri yükleyici batch boyutunu belirler. |
+| Optimizer etiketi | Kısmen | `optimizer` | VGG16, ResNet50 ve Custom CNN'de etkilidir; Custom V2'de arayüzde görünür fakat etkin optimizer her zaman AdamW'dir. |
+| Classifier genişliği | Kısmen | `dense_units` | VGG16 ve ResNet50 classifier başlıklarında etkilidir; Custom CNN ve Custom V2'de kullanılmaz. |
+| Konvolüsyon blok sayısı | Kısmen | `num_blocks` | Yalnız Custom CNN'de etkilidir. Custom V2'de blok sayısı sabit 5'tir. |
+| Konvolüsyon kanal genişliği | Kısmen | `base_filters` | Custom CNN ve Custom V2'de etkilidir; VGG16/ResNet50 omurgaları sabittir. |
+| Konvolüsyon kernel size | Kısmen | `kernel_size` | Custom CNN'de depthwise conv kernel size, Custom V2'de 5 bloktaki conv kernel size için etkilidir. Stem conv, pointwise `1x1` conv ve transfer omurgaları için aranmaz. |
+| Konvolüsyon stride | Hayır | `stride=2` veya varsayılan `stride=1` | Custom CNN stem conv `stride=2`, diğer conv katmanları varsayılan `stride=1`; Custom V2 conv katmanları varsayılan `stride=1`. |
+| Padding | Hayır | `padding=1` veya `padding=kernel_size//2` | Stem padding sabittir; aranan kernel size'a bağlı padding hesaplanır fakat ayrı bir hiperparametre olarak seçilmez. |
+| Pooling tipi/kernel/stride | Hayır | `MaxPool2d(2)` veya `MaxPool2d(2,2)` | Pooling yapısı sabittir; algoritmalar pooling parametresi seçmez. |
+| Aktivasyon fonksiyonu | Hayır | `ReLU`, `LeakyReLU(0.3)` | Aktivasyon tipi ve LeakyReLU eğimi arama uzayında değildir. |
+| Fine-tuning kapsamı | Hayır | `fine_tune_layers=4`, `unfreeze_blocks=2` | VGG16 ve ResNet50 için eğitime açılan omurga bölgesi sabittir. |
+| SE attention kullanımı | Hayır | `SEBlock` tanımlı, forward'da uygulanmıyor | Custom CNN sonuçları aktif SE attention sonucu değildir. |
+
 Final hiperparametrelerle oluşan sıfırdan eğitilen mimari yapılar:
 
 | Model | Yöntem | Seçilen mimari hiperparametreler | Ortaya çıkan conv/pooling düzeni |
 | --- | --- | --- | --- |
-| Custom CNN | GA | `base_filters=64`, `num_blocks=4`, `kernel_size=5` | Stem: `Conv2d(3->64, k=3, stride=2)` + `MaxPool2d(2)`. Ardından depthwise-separable blok kanalları `64 -> 64 -> 128 -> 256 -> 512`; ilk 3 bloktan sonra `MaxPool2d(2)`, son bloktan sonra `AdaptiveAvgPool2d(1)`. |
-| Custom CNN | Bayesyen TPE | `base_filters=64`, `num_blocks=5`, `kernel_size=3` | Stem: `Conv2d(3->64, k=3, stride=2)` + `MaxPool2d(2)`. Ardından depthwise-separable blok kanalları `64 -> 64 -> 128 -> 256 -> 512 -> 1024`; ilk 4 bloktan sonra `MaxPool2d(2)`, son bloktan sonra `AdaptiveAvgPool2d(1)`. |
-| Proposed CNN / Custom V2 | GA | `base_filters=32`, `kernel_size=5` | 5 sabit blok: `Conv2d -> BatchNorm2d -> ReLU -> MaxPool2d(2,2)`. Kanal dizisi `32 -> 64 -> 128 -> 128 -> 128`; bloklardan sonra `AdaptiveAvgPool2d(1)`. |
-| Proposed CNN / Custom V2 | Bayesyen TPE | `base_filters=32`, `kernel_size=5` | GA ile aynı konvolüsyon/pooling düzeni oluşmuştur. Bu koşulda performans farkı mimari kanal/kernel farkından değil; öğrenme oranı, dropout, batch size ve etkin eğitim dinamiğinden kaynaklanmıştır. |
+| Custom CNN | GA | `base_filters=64`, `num_blocks=4`, `kernel_size=5` | Stem: `Conv2d(3->64, k=3, stride=2)` + `MaxPool2d(2)`. Ardından depthwise-separable blok kanalları `64 -> 64 -> 128 -> 256 -> 512`; ilk 3 bloktan sonra `MaxPool2d(2)`, son bloktan sonra `AdaptiveAvgPool2d(1)`. Yaklaşık uzamsal akış: `224 -> 112 -> 56 -> 28 -> 14 -> 7 -> 1`. |
+| Custom CNN | Bayesyen TPE | `base_filters=64`, `num_blocks=5`, `kernel_size=3` | Stem: `Conv2d(3->64, k=3, stride=2)` + `MaxPool2d(2)`. Ardından depthwise-separable blok kanalları `64 -> 64 -> 128 -> 256 -> 512 -> 1024`; ilk 4 bloktan sonra `MaxPool2d(2)`, son bloktan sonra `AdaptiveAvgPool2d(1)`. Yaklaşık uzamsal akış: `224 -> 112 -> 56 -> 28 -> 14 -> 7 -> 3 -> 1`. |
+| Proposed CNN / Custom V2 | GA | `base_filters=32`, `kernel_size=5` | 5 sabit blok: `Conv2d -> BatchNorm2d -> ReLU -> MaxPool2d(2,2)`. Kanal dizisi `32 -> 64 -> 128 -> 128 -> 128`; bloklardan sonra `AdaptiveAvgPool2d(1)`. Uzamsal akış: `224 -> 112 -> 56 -> 28 -> 14 -> 7 -> 1`. |
+| Proposed CNN / Custom V2 | Bayesyen TPE | `base_filters=32`, `kernel_size=5` | GA ile aynı konvolüsyon/pooling düzeni oluşmuştur. Bu koşulda performans farkı mimari kanal/kernel farkından değil; öğrenme oranı, dropout, batch size ve etkin eğitim dinamiğinden kaynaklanmıştır. Uzamsal akış: `224 -> 112 -> 56 -> 28 -> 14 -> 7 -> 1`. |
 
 Bu tabloda görüldüğü gibi pooling kernel, pooling stride ve konvolüsyon stride değerleri algoritmalar tarafından seçilmemiştir; kodda sabit tanımlıdır. Optimizasyon, Custom CNN için blok sayısı, başlangıç filtre sayısı ve separable conv kernel size; Proposed CNN için ise başlangıç filtre sayısı ve kernel size üzerinde etkilidir.
 
