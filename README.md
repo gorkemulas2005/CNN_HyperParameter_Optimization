@@ -79,16 +79,16 @@ Aşağıdaki tabloda "Repulsive Hybrid" stratejisiyle (GA'nın rastgele kötü m
 
 Aşırı öğrenme (overfitting) stratejileri uygulandıktan sonra elde edilen nihai test metrikleri aşağıdaki tabloda tüm modeller ve her iki optimizasyon stratejisi için verilmiştir:
 
-| Model (Mimariler) | Optimizasyon | Accuracy | Precision | Recall | F1-Score |
-| :--- | :--- | :---: | :---: | :---: | :---: |
-| **VGG16** | Bayesyen TPE | 0.9152 | 0.8488 | 0.8881 | 0.8655 |
-| **VGG16** | Genetik Algoritma | 0.9173 | 0.8538 | 0.8844 | 0.8649 |
-| **ResNet50** | Bayesyen TPE | 0.8710 | 0.9342 | 0.9081 | 0.8704 |
-| **ResNet50** | Genetik Algoritma | 0.8379 | 0.8088 | 0.8728 | 0.8234 |
-| **Custom CNN** | Bayesyen TPE | 0.9632 | 0.9416 | 0.9632 | 0.9521 |
-| **Custom CNN** | Genetik Algoritma | 0.8288 | 0.8125 | 0.8688 | 0.8215 |
-| **Proposed CNN** | Bayesyen TPE | 0.9189 | 0.9213 | 0.8922 | 0.8842 |
-| **Proposed CNN** | Genetik Algoritma | 0.8180 | 0.8162 | 0.8183 | 0.7907 |
+| Model (Mimariler) | Optimizasyon | En İyi Doğruluk (Accuracy) |
+| :--- | :--- | :---: |
+| **VGG16** | Bayesyen TPE | %95.65 |
+| **VGG16** | Genetik Algoritma | %91.46 |
+| **ResNet50** | Bayesyen TPE | %85.07 |
+| **ResNet50** | Genetik Algoritma | %97.35 |
+| **Custom CNN** | Bayesyen TPE | %63.85 |
+| **Custom CNN** | Genetik Algoritma | %85.41 |
+| **Proposed CNN** | Bayesyen TPE | %71.43 |
+| **Proposed CNN** | Genetik Algoritma | %47.06 |
 
 ### 3.2. Görsel Analizler (Epoch ve Confusion Matrix Plotları)
 
