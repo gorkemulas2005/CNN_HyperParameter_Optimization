@@ -85,15 +85,37 @@ Elde edilen deneysel sonuçlar üzerinden mimarilerin ve hiperparametre optimiza
 
 ## 5. EKLER (Appendix)
 
-### 5.1. Veri Seti Kaynağı
+### 5.1. Proje Yapısı (Directory Structure)
+```
+├── src/
+│   ├── models/
+│   │   ├── vgg16_model.py          # VGG16 transfer learning
+│   │   ├── resnet50_model.py       # ResNet50 transfer learning
+│   │   ├── custom_cnn_model.py     # Custom CNN (SE + depthwise separable)
+│   │   └── custom_cnn_v2_model.py  # Proposed 5-block CNN
+│   ├── optimization/
+│   │   ├── genetic_algorithm.py    # GA implementation (DEAP)
+│   │   ├── bayesian_tpe.py         # Bayesian TPE (Optuna)
+│   │   └── repulsive_bayesian.py   # Repulsive Hybrid (GA + BO)
+│   ├── utils/
+│   │   ├── data_loader.py          # DAGM 2007 data pipeline
+│   │   ├── trainer.py              # Training loop with early stopping
+│   │   ├── metrics.py              # Evaluation metrics (Acc, P, R, F1)
+│   │   └── plotter.py              # Visualization utilities
+│   └── train_and_compare.py        # Main execution script
+├── results/                    # Output directory
+└── requirements.txt
+```
+
+### 5.2. Veri Seti Kaynağı
 - **Orijinal Akademik Kaynak:** Üniversitenin resmi akademik web sitesinden temin edilmiştir. (Kaggle veya harici bir aracı platform kullanılmamıştır.)
 
-### 5.2. Kullanılan Kütüphaneler ve Amaçları
+### 5.3. Kullanılan Kütüphaneler ve Amaçları
 - **PyTorch & Torchvision (`torch`, `torchvision`):** Veri setinin tensor dönüşümleri, transfer learning (VGG, ResNet) modellerinin import edilmesi, loss ve gradient hesaplamalarının GPU (CUDA 12.4) üzerinde matrisel olarak işletilmesi için.
 - **Optuna (`optuna`):** İstatistiksel hiperparametre optimizasyonu olan Bayesyen TPE yönteminin dinamik arama uzayını inşa etmek ve budama (pruning) yapmak için.
 - **DEAP (`deap`):** Genetik Algoritma'nın kromozom kodlamasını (1B gen dizilimini), rulet/turnuva seçilimini ve iki noktalı çaprazlama işlemlerini simüle etmek için.
 - **Scikit-Learn (`sklearn`):** Model doğrulandıktan sonra matematiksel metriklerin (Macro Precision, Recall, F1-Score) ve Confusion Matrix'in IMRAD standardında hatasız hesaplanması için.
 - **Matplotlib & Seaborn (`matplotlib`, `seaborn`):** Eğim (Loss) ve başarım (Accuracy) metriklerinin epoch'lara bağlı geometrik değişimlerini, matrix ısı haritalarını görsel olarak ifade edebilmek için.
 
-### 5.3. Referans
+### 5.4. Referans
 - Acici, K., Beyaz, S., Sumer, E. (2020). *Femoral neck fracture detection in X-ray images using deep learning and genetic algorithm approaches.* Joint Diseases and Related Surgery, 31(2), 175-183.
