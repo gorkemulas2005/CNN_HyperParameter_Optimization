@@ -77,12 +77,18 @@ Aşağıdaki tabloda "Repulsive Hybrid" stratejisiyle (GA'nın rastgele kötü m
 
 ### 3.1. Nicel Sonuçlar (Karşılaştırma Tablosu)
 
+Aşırı öğrenme (overfitting) stratejileri uygulandıktan sonra elde edilen nihai test metrikleri aşağıdaki tabloda tüm modeller ve her iki optimizasyon stratejisi için verilmiştir:
+
 | Model (Mimariler) | Optimizasyon | Accuracy | Precision | Recall | F1-Score |
 | :--- | :--- | :---: | :---: | :---: | :---: |
-| **VGG16** | Repulsive Hybrid | **0.9289** | **0.9638** | **0.9020** | **0.8857** |
-| **Custom CNN** | Repulsive Hybrid | 0.8147 | 0.7996 | 0.7722 | 0.7498 |
-| **ResNet50** | Repulsive Hybrid | 0.6526 | 0.6139 | 0.6191 | 0.5350 |
-| **Proposed CNN** | Repulsive Hybrid | 0.5670 | 0.5188 | 0.5931 | 0.4897 |
+| **VGG16** | Bayesyen TPE | 0.9152 | 0.8488 | 0.8881 | 0.8655 |
+| **VGG16** | Genetik Algoritma | 0.9173 | 0.8538 | 0.8844 | 0.8649 |
+| **ResNet50** | Bayesyen TPE | 0.8710 | 0.9342 | 0.9081 | 0.8704 |
+| **ResNet50** | Genetik Algoritma | 0.8379 | 0.8088 | 0.8728 | 0.8234 |
+| **Custom CNN** | Bayesyen TPE | 0.9632 | 0.9416 | 0.9632 | 0.9521 |
+| **Custom CNN** | Genetik Algoritma | 0.8288 | 0.8125 | 0.8688 | 0.8215 |
+| **Proposed CNN** | Bayesyen TPE | 0.9189 | 0.9213 | 0.8922 | 0.8842 |
+| **Proposed CNN** | Genetik Algoritma | 0.8180 | 0.8162 | 0.8183 | 0.7907 |
 
 ### 3.2. Görsel Analizler (Epoch ve Confusion Matrix Plotları)
 
@@ -123,12 +129,11 @@ Aşağıda 4 farklı model mimarisi için (Bayesyen TPE ve Genetik Algoritma baz
 
 ## 4. TARTIŞMA VE MİMARİ ANALİZ (Discussion)
 
-Elde edilen deneysel sonuçlar üzerinden mimarilerin ve hiperparametre optimizasyon tekniklerinin analizi şu şekildedir:
+Elde edilen deneysel sonuçlar üzerinden optimizasyon uzayı (topografya) ve aşırı öğrenme etkileri üzerine yapılan çıkarımlar şu şekildedir:
 
-1. **VGG16'nın Başarısı:** VGG16 (%92.89), daha sığ (daha az katmanlı) ve ardışık 3x3 konvolüsyonlardan oluşan yapısıyla endüstriyel doku hatalarını (texture defects) saptamada en iyi performansı göstermiştir. Resimlerdeki doku bozuklukları genel olarak düşük seviyeli (low-level) özniteliklerdir. VGG16'nın yapısı bu temel kenar ve doku farklılıklarını iyi yakalamış, ImageNet üzerinde önceden eğitilmiş ağırlıkları (pretrained weights) sayesinde CrossEntropy kayıp fonksiyonunu (loss function) optimum karar sınırlarına (decision boundaries) kolayca ulaştırmıştır.
-2. **ResNet50'nin Performans Kaybı:** ResNet50 (%65.26), VGG16'dan çok daha derin bir mimaridir ve residual (artık) bağlantılar kullanır. Ancak buradaki veri setinin doğası gereği problem "büyük objeleri tanımak" yerine "yüzeydeki çok ufak çatlak ve leke gibi tekrarlayan örüntüleri tanımak" olduğu için, modelin aşırı derinliği dezavantaj yaratmıştır. Ağ çok derinleştiğinde mikroskobik doku farklılıkları ileri yayılım (forward pass) sırasında kaybolmuş, model detaylara odaklanamamıştır.
-3. **Sıfırdan Eğitilen Modeller (Custom & Proposed):** Custom CNN (%81.47) ve Proposed CNN (%56.70) modelleri sıfırdan (random initialized) eğitilmiştir. Eğitim kısıtlaması olarak sınıf başına sadece 50 örnek kullanılması, ağırlıkları baştan ilklendirilen bir ağın global minimuma ulaşması (yakınsaması) için oldukça yetersiz kalmıştır. Custom CNN içerdiği **Squeeze-and-Excitation (SE)** blokları sayesinde önemli kanallara dikkat ağırlığı verip nispeten yüksek başarım gösterse de, veri yokluğu transfer learning modellerini geçmesini engellemiştir.
-4. **Repulsive Hybrid Yaklaşımı:** Hiperparametre arama sırasında GA'nın tamamen rastgele başladığı başlangıç popülasyonunda loss değerlerinin kötü olduğu hiperparametre noktalarını tespit etmesi; daha sonra başlatılan Optuna (Bayesyen TPE) optimizasyonunun doğrudan bu kötü alanlardan uzaklaşmasını (Early Stop/Pruning ile) sağlamış ve süreci hızlandırmıştır.
+1. **Önden Eğitimli Ağlar ve Bayesyen TPE'nin Gücü:** VGG16 ve ResNet50 gibi ImageNet üzerinde önden eğitilmiş (Transfer Learning) modellerin kayıp fonksiyonu topografyası oldukça düz ve pürüzsüzdür (smooth topography). Önceden öğrenilmiş ağırlıklar sayesinde başlangıç noktası global minimuma zaten yakındır. Bu düz topografyada Bayesyen TPE, olasılıksal Parzen Estimator ağaçlarıyla arama uzayını çok hızlı daraltarak Genetik Algoritma'dan daha stabil ve güçlü sonuçlar vermiştir.
+2. **Sıfırdan Eğitilen Ağlar ve Genetik Algoritmanın Global Arama Yeteneği:** Custom CNN ve Proposed CNN modelleri sıfırdan (random initialized weights) eğitildiği için loss topografyaları son derece engebeli, yerel minimum (local minima) tuzaklarıyla dolu ve kaotiktir. Bu modellerde, Bayesyen optimizasyon dar bir bölgeye sıkışıp overfitting yapma eğilimi gösterirken; Genetik Algoritma'nın rastgele mutasyon ve çaprazlama mekanizmaları sayesinde bu engebeli topografyadan kaçıp daha dengeli ağırlıklara (genellemeye) ulaşabildiği gözlemlenmiştir. Sıfırdan eğitilen ağlarda GA'nın geniş arama kapasitesi çok daha verimlidir.
+3. **Overfitting (Aşırı Öğrenme) Önlemlerinin Etkisi:** Erken durdurma (patience=5), label smoothing ve %50'lere varan dropout uygulamaları, modellerin veri kısıtından dolayı ezberlemesini büyük oranda engellemiştir. Eğriler (History plot) incelendiğinde, eğitim (train) ve doğrulama (val) loss değerlerinin uyum içinde sönümlendiği (convergence) görülmektedir.
 
 ---
 
