@@ -4,8 +4,10 @@ models/vgg16_model.py
 Model 1: VGG-16 Transfer Learning (PyTorch / torchvision).
 
 Loads ImageNet-pretrained VGG-16 weights, freezes the feature extractor,
-and selectively unfreezes the last N convolutional layers for fine-tuning.
-The classifier head is replaced with a custom classification head.
+and selectively unfreezes the last N feature modules for fine-tuning.
+With the default N=4, this includes the final Conv2d layer and adjacent
+parameter-free modules. The classifier head is replaced with a custom
+classification head.
 """
 
 import torch
@@ -26,7 +28,8 @@ def build_vgg16(
     for param in model.features.parameters():
         param.requires_grad = False
 
-    # Unfreeze the last N convolutional layers for fine-tuning
+    # Unfreeze the last N feature modules for fine-tuning.
+    # With torchvision VGG16 and N=4, only the final Conv2d has parameters.
     children = list(model.features.children())
     for layer in children[-fine_tune_layers:]:
         for param in layer.parameters():

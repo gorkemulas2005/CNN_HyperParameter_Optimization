@@ -113,7 +113,7 @@ Kaynak: `src/models/vgg16_model.py`
 
 - Torchvision `vgg16` modeli ImageNet ağırlıklarıyla başlatılır.
 - `model.features` içindeki tüm parametreler önce dondurulur.
-- Kod `children[-fine_tune_layers:]` ile son 4 feature modülünü yeniden eğitime açar. VGG16 feature diziliminde bu aralık parametre içeren son iki konvolüsyon katmanını ve parametresiz aktivasyon/pooling modüllerini kapsar.
+- Kod `children[-fine_tune_layers:]` ile son 4 feature modülünü yeniden eğitime açar. VGG16 feature diziliminde bu aralık parametre içeren son `Conv2d` katmanını ve parametresiz `ReLU`/`MaxPool2d` modüllerini kapsar.
 - Sınıflandırıcı başlığı şu yapı ile değiştirilir:
   `Linear(25088, dense_units) -> BatchNorm1d -> ReLU -> Dropout -> Linear(dense_units, 10)`
 
