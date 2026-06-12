@@ -47,19 +47,26 @@ YZM304 Deep Learning dersi kapsamında 5. proje için hazırlanan bu çalışmad
    - Her blok: `Conv2D (3x3) -> BatchNorm2D -> ReLU -> MaxPool2D(2,2)` yapısındadır.
    - Sonunda `AdaptiveAvgPool2d(1)`, `Flatten`, `Dropout(p=0.5)` ve 10 sınıf için Linear katman içerir.
 
-### 2.3. Optimizasyon Parametreleri ve Kayıp (Loss) Metodolojisi
+### 2.3. Aşırı Öğrenmeyi (Overfitting) Önleme Stratejileri
+Modelin ezberlemesini önlemek ve genelleme kapasitesini artırmak için eğitim aşamasında aşağıdaki teknikler veri setine ve kayıp (loss) mekanizmasına doğrudan entegre edilmiştir:
+- **Veri Çeşitlendirme (Data Augmentation):** Görüntülere `RandomHorizontalFlip`, `RandomVerticalFlip`, `RandomRotation(15)`, `ColorJitter` ve sentetik endüstriyel gürültü benzetimi için `AddGaussianNoise(std=0.05)` uygulanmıştır. Ayrıca görüntünün belli kısımlarını maskeleyerek modelin farklı özelliklere odaklanmasını sağlayan `RandomErasing(p=0.5)` metodu kullanılmıştır.
+- **Label Smoothing (Etiket Yumuşatma):** Sınıflandırma işleminde `CrossEntropyLoss(label_smoothing=0.1)` kullanılarak hedefler (1 yerine 0.9 gibi) yumuşatılmış, ağın tek bir özniteliğe olan aşırı güveni kırılmıştır.
+- **L2 Regularization (Weight Decay):** Bütün optimizasyon algoritmalarında (Adam, SGD, RMSprop) aşırı büyük ağırlık güncellemelerini cezalandırmak için `weight_decay=1e-3` parametresi sabit tutulmuştur.
+- **Erken Durdurma (Early Stopping):** Doğrulama doğruluğunun (val_acc) art arda 5 epoch boyunca gelişmemesi durumunda eğitim kesilmiş ve en iyi ağırlıklara (best_weights) geri dönülmüştür (`patience=5`).
+- **Dropout:** Tam bağlı (Fully Connected) ağ yapılarına modele ve optimizasyona bağlı olarak %20 ile %60 arasında rastgele nöron kapatma işlemi uygulanmıştır.
+
+### 2.4. Optimizasyon Parametreleri ve Kayıp (Loss) Metodolojisi
 
 Her model için optimizasyon arayışı aşağıdaki metotlar ve parametrelerle yapılmıştır:
-- **Kayıp Fonksiyonu (Loss Function):** Tüm ağlarda `CrossEntropyLoss(label_smoothing=0.1)` kullanılmıştır. Label smoothing ile modelin aşırı güvenli (overconfident) tahmin yapıp ezberlemesi engellenmiştir.
 - **Learning Rate Planlayıcı:** Eğitim süresince öğrenme oranı `CosineAnnealingLR` (T_max=epochs) ile dinamik olarak düşürülerek global minimuma hassas yaklaşılması sağlanmıştır.
-- **Epoch ve Batch Size:** Final eğitimleri **10 epoch** ve arama uzayından gelen spesifik (16, 32, 64 vb.) **batch size** değerleriyle yapılmıştır. Model eğitiminde patience=5 olacak şekilde Early Stopping (Erken durdurma) uygulanmıştır.
+- **Epoch ve Batch Size:** Final eğitimleri **10 epoch** ve arama uzayından gelen spesifik (16, 32, 64 vb.) **batch size** değerleriyle yapılmıştır.
 
 #### A. Genetik Algoritma (GA) Yapısı
 - **Başlangıç Durumu:** Arama uzayındaki parametre kombinasyonları (Örn: LR, Dropout, Dense Unit) `random.randint` ile indekslenerek **tamamen rastgele (random)** bir ilk popülasyon yaratılarak başlar.
 - **Operatörler:** Turnuva seçilimi (Tournament selection, tournsize=3), iki noktalı çaprazlama (Two-Point Crossover, %70 ihtimal) ve Uniform Integer Mutasyon (%20 ihtimal) kullanılmıştır.
 
 #### B. Bayesyen TPE Yapısı
-- **Başlangıç Durumu:** Optuna TPE (Tree-structured Parzen Estimator) algoritması, başlangıçta arama uzayını tanımak için rastgele örneklem alır (random startup). Ardından iyi ve kötü loss veren parametreleri bölerek kendi istatistiksel ağaç yapısını kurar.
+- **Başlangıç Durumu:** Optuna TPE (Tree-structured Parzen Estimator) algoritması, başlangıçta arama uzayını tanımak için rastgele örneklem alır (random startup phase). Ardından iyi ve kötü loss veren parametreleri izole ederek istatistiksel bir ağaç yapısı kurar.
 - Arama uzayında logaritmik öğrenme oranı (1e-5 ile 1e-2 arası), Adam/SGD/RMSprop optimizasyon fonksiyonları (algoritmaları) aranmıştır.
 
 ---
